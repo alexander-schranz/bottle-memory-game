@@ -40,22 +40,29 @@
             }
         }
 
+        .card[style]:not([style=""]) {
+            transform: rotateY(180deg);
+            background-color: white;
+        }
+
         .card {
             width: 16.6%;
             padding-bottom: 16.6%;
-            border: 1px solid black;
+            border: 2px dashed #999;
             border-radius: 5%;
             margin: 1%;
-            cursor: pointer;
+            cursor: grab;
             background-size: contain;
             background-position: center center;
             background-repeat: no-repeat;
+            background-color: #f7f7f7;
+            transition: transform .25s ease-in-out;
         }
 
         .hide-card {
             pointer-events: none;
             opacity: 0.25;
-            border-color: green;
+            border: 2px solid green;
         }
     </style>
 </head>
