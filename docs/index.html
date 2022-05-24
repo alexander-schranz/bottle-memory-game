@@ -194,13 +194,14 @@
                         ++correctCounter;
 
                         if (correctCounter === gameLogic.length) {
-
                             const endTime = new Date();
                             const seconds = (endTime.getTime() - startTime.getTime()) / 1000;
 
-                            if (confirm('🎉🎉🎉 Finished in ' + seconds + ' seconds! Play again! 🎉🎉🎉')) {
-                                location.reload();
-                            }
+                            setTimeout(function() {
+                                if (confirm('🎉🎉🎉 Finished in ' + seconds + ' seconds! Play again! 🎉🎉🎉')) {
+                                    location.reload();
+                                }
+                            }, 500);
                         }
                     }
                 });
