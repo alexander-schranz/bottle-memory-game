@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <meta property="og:image" content="meta-image.png"/>
+
+    <style>
+        *,
+        *::after,
+        *::before {
+            box-sizing: content-box;
+        }
+
+        .wrap {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100vh;
+            margin: 0 auto;
+        }
+
+        @media (orientation: portrait) {
+            .wrap {
+                width: 100vw;
+                height: 100vw;
+            }
+        }
+
+        .card {
+            width: 16.6%;
+            padding-bottom: 16.6%;
+            border: 1px solid black;
+            border-radius: 5%;
+            margin: 1%;
+            cursor: pointer;
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+        .hide-card {
+            pointer-events: none;
+            opacity: 0.25;
+            border-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="field" class="wrap">
+
+    </div>
+
+    <script defer>
+        const startTime = new Date();
+
+        function shuffle(array) {
+            let currentIndex = array.length,  randomIndex;
+
+            // While there remain elements to shuffle.
+            while (currentIndex !== 0) {
+                // Pick a remaining element.
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+
+            return array;
+        }
+
+        const gameLogic = [
+            {
+                bottle: 'images/alfi-cola-bottle.jpg',
+                box: 'images/fink-kiste.png',
+            },
+            {
+                bottle: 'images/alfi-zitrone-bottle.jpg',
+                box: 'images/fink-kiste.png',
+            },
+            {
+                bottle: 'images/bionade-bottle.png',
+                box: 'images/bionade-kiste.jpg',
+            },
+            {
+                bottle: 'images/bionade-ingwer-bottle.png',
+                box: 'images/bionade-kiste.jpg',
+            },
+            {
+                bottle: 'images/clubmate-bottle.jpg',
+                box: 'images/clubmate-kiste.jpg',
+            },
+            {
+                bottle: 'images/clubmate-cola-bottle.png',
+                box: 'images/clubmate-kiste.jpg',
+            },
+            {
+                bottle: 'images/frucade-bottle.jpg',
+                box: 'images/frucade-kiste.jpg',
+            },
+            {
+                bottle: 'images/makava-bottle.jpg',
+                box: 'images/makava-kiste.jpg',
+            },
+            {
+                bottle: 'images/meckatzer-bottle.png',
+                box: 'images/meckatzer-kiste.jpg',
+            },
+            {
+                bottle: 'images/mohren-pfiff-bottle.png',
+                box: 'images/mohren-kiste.jpg',
+            },
+            {
+                bottle: 'images/mohren-saurer-bottle.png',
+                box: 'images/mohren-kiste.jpg',
+            },
+            {
+                bottle: 'images/mohren-zitrone-bottle.png',
+                box: 'images/mohren-kiste.jpg',
+            },
+        ];
+
+        const field = document.getElementById('field');
+
+        const cards = [];
+
+        (function() {
+            let counter = 0;
+            gameLogic.forEach((item) => {
+                field.append(createCard(++counter));
+                field.append(createCard(++counter));
+                cards.push(item.bottle);
+                cards.push(item.box);
+            });
+
+            shuffle(cards);
+        })();
+
+        let correctCounter = 0;
+        let elementBefore = null;
+
+        function resetFields() {
+            if (elementBefore === null) {
+                [...field.children].forEach((item) => {
+                    if (!item.classList.contains('hide-card')) {
+                        item.style.backgroundImage = null;
+                        item.dataset.image = null;
+                    }
+                });
+            }
+        }
+
+        document.onclick = resetFields;
+
+        function clickCard(event) {
+            event.stopPropagation();
+
+            resetFields();
+
+            const element = event.currentTarget;
+
+            const identifier = element.dataset.identifier;
+            const image = cards[identifier - 1];
+            element.dataset.image = image;
+
+            element.style.backgroundImage = 'url(\'' + image + '\')';
+
+            if (elementBefore == null) {
+                elementBefore = element;
+            } else {
+                gameLogic.forEach((item) => {
+                    if (
+                        (item.box === elementBefore.dataset.image && item.bottle === element.dataset.image)
+                        || (item.bottle === elementBefore.dataset.image && item.box === element.dataset.image)
+                    ) {
+                        elementBefore.classList.add('hide-card');
+                        element.classList.add('hide-card');
+
+                        ++correctCounter;
+
+                        if (correctCounter === gameLogic.length) {
+
+                            const endTime = new Date();
+                            const seconds = (endTime.getTime() - startTime.getTime()) / 1000;
+
+                            if (confirm('🎉🎉🎉 Finished in ' + seconds + ' seconds! Try again! 🎉🎉🎉')) {
+                                location.reload();
+                            }
+                        }
+                    }
+                });
+
+                elementBefore = null;
+            }
+        }
+
+        function createCard(counter) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.identifier = counter;
+            card.onclick = clickCard;
+
+            return card;
+        }
+    </script>
+</body>
+</html>
